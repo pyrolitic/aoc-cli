@@ -1,8 +1,7 @@
+#!/usr/bin/python2
 import pickle, getpass
 import requests, urlparse
 import pyquery
-
-CHECK = u'\u2713'.encode('utf8')
 
 def loginGetCookies(username, password):
     s = requests.Session()
