@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 import pickle, getpass, sys
 import requests
 import pyquery
@@ -8,9 +9,13 @@ def printInput(session, day, opt):
     if opt == "text":
         r = session.get("https://adventofcode.com/2018/day/" + str(day))
         pq = pyquery.PyQuery(r.content)
-        text = pq('article')[0].text_content()
-        print text
+        parts =  pq('article.day-desc')
+        for i, part in enumerate(parts):
+            print ">>>>>>>>>>>>>>>>>> Part %d <<<<<<<<<<<<<<<<<" % (i + 1)
+            text = part.text_content()
+            print text.encode('utf8')
     elif opt == "input":
+        # seems to be one input for all parts
         r = session.get("https://adventofcode.com/2018/day/" + str(day) + "/input")
         print r.content
 
