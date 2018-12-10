@@ -3,7 +3,9 @@ import pickle, getpass, sys
 import requests
 import pyquery
 
-def putAnswer(session, day, part, answer):
+import lib
+
+def put_answer(session, day, part, answer):
     data = {
         "level": part,
         "answer": answer
@@ -32,10 +34,8 @@ if __name__ == "__main__":
         if not 1 <= day <= 25:
             usage()
         else:
-            with open(".cookies", "rb") as f:
-                s = requests.session()
-                cookies = pickle.load(f)
-                s.cookies.update(cookies)
-                putAnswer(s, day, part, answer)
+            s = lib.restore_session()
+            if s:
+                put_answer(s, day, part, answer)
     else:
         usage()
