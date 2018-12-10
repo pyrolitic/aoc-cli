@@ -3,9 +3,11 @@ import pickle, getpass, sys
 import requests
 import pyquery
 
+import lib
+
 opts = ("text", "input",)
 
-def printInput(session, day, opt):
+def print_input(session, day, opt):
     if opt == "text":
         r = session.get("https://adventofcode.com/2018/day/" + str(day))
         pq = pyquery.PyQuery(r.content)
@@ -31,10 +33,8 @@ if __name__ == "__main__":
         if not ( opt in opts and 1 <= day <= 25 ):
             usage()
         else:
-            with open(".cookies", "rb") as f:
-                s = requests.session()
-                cookies = pickle.load(f)
-                s.cookies.update(cookies)
-                printInput(s, day, opt)
+            s = lib.restore_session()
+            if s:
+                print_input(s, day, opt)
     else:
         usage()
