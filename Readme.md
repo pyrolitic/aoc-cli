@@ -1,6 +1,6 @@
-# Advent of code (2018) CLI
+# Advent of code CLI
 
-Python2 based CLI client for [Advent of Code](https://adventofcode.com).
+Python3 based CLI client for [Advent of Code](https://adventofcode.com).
 Authenticate, then use `get.py text <day>` and `get.py input <day>` to print the problem description or input data, respectively, to stdout.
 Use `put.py <day> [part=1] <answer>` to try to submit and answer attempt.
 

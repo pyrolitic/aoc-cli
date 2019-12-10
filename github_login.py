@@ -1,6 +1,6 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 import pickle, getpass
-import requests, urlparse
+import requests, urllib.parse
 import pyquery
 
 import lib
@@ -26,9 +26,9 @@ def auth_session(username, password):
         if r.url.lower().find("adventofcode.com") >= 0:
             return s
         else:
-            print "Github auth failed"
+            print("Github auth failed")
     else:
-        print "Github login attempt failed (bad request)"
+        print("Github login attempt failed (bad request)")
     return None
 
 if __name__ == "__main__":
@@ -36,15 +36,15 @@ if __name__ == "__main__":
         fp = lib.cookies_path()
         f = open(fp, "wb")
     except OSError as e:
-        print >>sys.stderr, "Failed to open", fp, "as writable"
+        print("Failed to open", fp, "as writable", file=sys.stderr)
 
     if f:
-        username = raw_input("Username:")
-        password = getpass.getpass( "Password:")
+        username = input("Username:")
+        password = getpass.getpass("Password:")
         session = auth_session(username, password)
         if session:
             pickle.dump(session.cookies, f)
-            print "Wrote sesison cookies ", fp, "for", username
-            print "This file cannot be used to authenticate with Github, but do not make it public"
+            print("Wrote session cookies ", fp, "for", username)
+            print("This file cannot be used to authenticate with Github, but do not make it public")
         f.close()
 

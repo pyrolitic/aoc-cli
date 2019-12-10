@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 import pickle, getpass, sys
 import requests
 import pyquery
@@ -10,15 +10,15 @@ def put_answer(session, day, part, answer):
         "level": part,
         "answer": answer
     }
-    url = "https://adventofcode.com/2018/day/" + str(day) + "/answer"
+    url = "https://adventofcode.com/%d/day/%d/answer" % (lib.current_year(), day)
     req = session.post(url, data = data)
     pq = pyquery.PyQuery(req.content)
     outcome = pq('article')[0].text_content()
-    print outcome.encode('utf8')
+    print(outcome)
 
 def usage():
-    print >>sys.stderr, "Usage: put.py <day> [part=1] <answer>"
-    print >>sys.stderr, "day must be in range [1..25]"
+    print("Usage: put.py <day> [part=1] <answer>", file=sys.stderr)
+    print("day must be in range [1..25]", file=sys.stderr)
 
 if __name__ == "__main__":
     if 3 <= len(sys.argv) <= 4:

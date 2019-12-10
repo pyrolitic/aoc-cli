@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 import pickle, getpass, sys
 import requests
 import pyquery
@@ -9,21 +9,22 @@ opts = ("text", "input",)
 
 def print_input(session, day, opt):
     if opt == "text":
-        r = session.get("https://adventofcode.com/2018/day/" + str(day))
+        r = session.get("https://adventofcode.com/%d/day/%d" % (lib.current_year(), day))
         pq = pyquery.PyQuery(r.content)
-        parts =  pq('article.day-desc')
+        parts = pq('article.day-desc')
         for i, part in enumerate(parts):
-            print ">>>>>>>>>>>>>>>>>> Part %d <<<<<<<<<<<<<<<<<" % (i + 1)
+            print(">>>>>>>>>>>>>>>>>> Part %d <<<<<<<<<<<<<<<<<" % (i + 1))
             text = part.text_content()
-            print text.encode('utf8')
+            print(text)
     elif opt == "input":
         # seems to be one input for all parts
-        r = session.get("https://adventofcode.com/2018/day/" + str(day) + "/input")
-        print r.content
+        r = session.get("https://adventofcode.com/%d/day/%d/input" % (lib.current_year(), day))
+        text = r.content.decode('utf8').rstrip('\n')
+        print(text)
 
 def usage():
-    print >>sys.stderr, "Usage: {" + ','.join(opts) + "} <day>"
-    print >>sys.stderr, "day must be in range [1..25]"
+    print("Usage: {" + ','.join(opts) + "} <day>", file=sys.stderr)
+    print("day must be in range [1..25]", file=sys.stderr)
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
