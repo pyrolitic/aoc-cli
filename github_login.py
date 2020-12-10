@@ -1,50 +1,58 @@
 #!/usr/bin/python3
-import pickle, getpass
-import requests, urllib.parse
+
+import sys
+import pickle
+import getpass
+import requests
 import pyquery
 
 import lib
 
 def auth_session(username, password):
-    s = requests.Session()
-    lg = s.get("https://adventofcode.com/auth/github")
+    session = requests.Session()
+    login_page = session.get("https://adventofcode.com/auth/github")
 
-    pq = pyquery.PyQuery(lg.content)
-    has_utf8 = pq('input[name=utf8]')[0].value
-    auth_token = pq('input[name=authenticity_token]')[0].value
+    query = pyquery.PyQuery(login_page.content)
+    #has_utf8 = query('input[name=utf8]')[0].value
 
     data = {
-        "authenticity_token": auth_token,
-        "utf8": has_utf8,
-        "commit:": "Sign+in",
+        #"utf8": has_utf8,
+        "commit:": "Sign in",
         "login": username,
         "password": password,
     }
 
-    r = s.post("https://github.com/session", data=data)
-    if r.status_code == 200:
-        if r.url.lower().find("adventofcode.com") >= 0:
-            return s
-        else:
-            print("Github auth failed")
+    inputs = [ "authenticity_token", "return_to", "timestamp", "timestamp_secret" ]
+    for inp in inputs:
+        val = query('input[name=%s]' % inp)[0].value
+        data[inp] = val
+
+    req = session.post("https://github.com/session", data=data)
+    import pdb
+    pdb.set_trace()
+    if req.status_code == 200:
+        if "adventofcode.com" in req.url.lower():
+            return session
+
+        print("Github auth failed but return code was 200")
+        print("Try logging in from a browser, in case 2 factor auth is required")
     else:
-        print("Github login attempt failed (bad request)")
+        print("Github login attempt failed (bad request, code", req.status_code, ")")
     return None
 
-if __name__ == "__main__":
+def main():
     try:
-        fp = lib.cookies_path()
-        f = open(fp, "wb")
-    except OSError as e:
-        print("Failed to open", fp, "as writable", file=sys.stderr)
+        path = lib.cookies_path()
+        with open(path, "wb") as cookies_file:
+            username = input("Username:")
+            password = getpass.getpass("Password:")
+            session = auth_session(username, password)
+            if session:
+                pickle.dump(session.cookies, cookies_file)
+                print("Wrote session cookies at ", path, "for", username)
+                print("This file cannot be used to authenticate with Github, but do not make it public")
+    except Exception as ex:
+        print(ex, "Failed to write cookies to", path, file=sys.stderr)
 
-    if f:
-        username = input("Username:")
-        password = getpass.getpass("Password:")
-        session = auth_session(username, password)
-        if session:
-            pickle.dump(session.cookies, f)
-            print("Wrote session cookies ", fp, "for", username)
-            print("This file cannot be used to authenticate with Github, but do not make it public")
-        f.close()
-
+if __name__ == "__main__":
+    main()
