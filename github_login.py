@@ -28,8 +28,6 @@ def auth_session(username, password):
         data[inp] = val
 
     req = session.post("https://github.com/session", data=data)
-    import pdb
-    pdb.set_trace()
     if req.status_code == 200:
         if "adventofcode.com" in req.url.lower():
             return session
